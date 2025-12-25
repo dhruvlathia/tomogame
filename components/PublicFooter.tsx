@@ -1,6 +1,6 @@
 export default function PublicFooter() {
   return (
-    <footer className="relative z-10 border-t border-white/5 bg-[#020617] pt-16 pb-8">
+    <footer className="relative z-10 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#020617] pt-16 pb-8">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-2">

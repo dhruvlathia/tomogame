@@ -84,15 +84,15 @@ export default function Home() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-blue-500/30 font-sans overflow-x-hidden flex flex-col">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-200 selection:bg-blue-500/30 font-sans overflow-x-hidden flex flex-col">
       {/* Background Elements */}
-      <div className="fixed inset-0 z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/20 blur-[120px] animate-pulse"></div>
+      <div className="fixed inset-0 h-screen z-0">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 dark:bg-blue-600/20 blur-[120px] animate-pulse"></div>
         <div
-          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/20 blur-[120px] animate-pulse"
+          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/10 dark:bg-purple-600/20 blur-[120px] animate-pulse"
           style={{ animationDelay: "2s" }}
         ></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 dark:opacity-20 mix-blend-overlay"></div>
       </div>
 
       <PublicNavbar />
@@ -100,7 +100,7 @@ export default function Home() {
       {/* Hero Section */}
       <main className="relative z-10 max-w-7xl mx-auto px-6 pt-12 pb-24 grid lg:grid-cols-2 gap-16 items-center flex-grow">
         <div className="space-y-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-bold tracking-wider uppercase">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold tracking-wider uppercase">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
@@ -108,14 +108,14 @@ export default function Home() {
             Join the Fun
           </div>
 
-          <h1 className="text-6xl md:text-7xl font-black text-white leading-[1.1] tracking-tight">
+          <h1 className="text-6xl md:text-7xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight">
             The Ultimate <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">
               Friendship Quiz
             </span>
           </h1>
 
-          <p className="text-lg text-slate-400 max-w-lg leading-relaxed">
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed">
             Create quizzes about yourself, share them with friends, and discover
             who knows you best. Build stronger bonds through fun trivia and see
             how well your friends really know you!
@@ -126,7 +126,7 @@ export default function Home() {
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="w-10 h-10 rounded-full border-2 border-[#020617] bg-slate-800 flex items-center justify-center text-xs font-bold overflow-hidden"
+                  className="w-10 h-10 rounded-full border-2 border-white dark:border-[#020617] bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold overflow-hidden"
                 >
                   <img
                     src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`}
@@ -134,12 +134,12 @@ export default function Home() {
                   />
                 </div>
               ))}
-              <div className="w-10 h-10 rounded-full border-2 border-[#020617] bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white">
+              <div className="w-10 h-10 rounded-full border-2 border-white dark:border-[#020617] bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white">
                 +2k
               </div>
             </div>
             <div className="flex flex-col justify-center">
-              <div className="text-sm font-bold text-white">
+              <div className="text-sm font-bold text-slate-900 dark:text-white">
                 Friendships Made
               </div>
               <div className="text-xs text-slate-500">
@@ -152,16 +152,18 @@ export default function Home() {
         {/* Login Form Card */}
         <div className="relative group">
           <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-[2rem] blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-          <div className="relative bg-slate-900/80 backdrop-blur-xl border border-white/10 p-8 md:p-10 rounded-[2rem] shadow-2xl">
+          <div className="relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-8 md:p-10 rounded-[2rem] shadow-xl dark:shadow-2xl">
             {user ? (
               <div className="text-center space-y-6 py-8">
                 <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-4xl text-blue-400">👋</span>
                 </div>
-                <h2 className="text-3xl font-bold text-white">Welcome back!</h2>
-                <p className="text-slate-400">
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
+                  Welcome back!
+                </h2>
+                <p className="text-slate-600 dark:text-slate-400">
                   You are logged in as{" "}
-                  <span className="text-blue-400 font-mono">
+                  <span className="text-blue-600 dark:text-blue-400 font-mono">
                     {user.email?.split("@")[0]}
                   </span>
                 </p>
@@ -175,10 +177,10 @@ export default function Home() {
             ) : (
               <>
                 <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-white mb-2">
+                  <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
                     Start Your Quiz
                   </h2>
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-slate-600 dark:text-slate-400 text-sm">
                     Enter a username to create your profile.
                   </p>
                 </div>
@@ -193,7 +195,7 @@ export default function Home() {
                       placeholder="e.g. best_friend_01"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                      className="w-full bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-xl px-4 py-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                       disabled={loading}
                     />
                   </div>
@@ -208,13 +210,13 @@ export default function Home() {
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-slate-950/50 border border-white/5 rounded-xl px-4 py-4 text-white placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all pr-12"
+                        className="w-full bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-xl px-4 py-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all pr-12"
                         disabled={loading}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors"
                       >
                         {showPassword ? (
                           <svg
@@ -256,7 +258,7 @@ export default function Home() {
                   </div>
 
                   {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl text-sm animate-shake">
+                    <div className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl text-sm animate-shake">
                       {error}
                     </div>
                   )}
@@ -289,10 +291,13 @@ export default function Home() {
                   </button>
                 </form>
 
-                <div className="mt-8 pt-8 border-t border-white/5 text-center">
+                <div className="mt-8 pt-8 border-t border-slate-200 dark:border-white/5 text-center">
                   <p className="text-xs text-slate-500">
                     By entering, you agree to our{" "}
-                    <a href="#" className="text-slate-400 hover:underline">
+                    <a
+                      href="#"
+                      className="text-slate-600 dark:text-slate-400 hover:underline"
+                    >
                       Terms of Service
                     </a>
                     . New accounts are created automatically.
@@ -305,10 +310,10 @@ export default function Home() {
       </main>
 
       {/* Features Section */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 py-24 border-t border-white/5">
+      <section className="relative z-10 max-w-7xl mx-auto px-6 py-24 border-t border-slate-200 dark:border-white/5">
         <div className="grid md:grid-cols-3 gap-12">
           <div className="space-y-4">
-            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400">
+            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -323,14 +328,16 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-white">Create Your Quiz</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+              Create Your Quiz
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
               Easily craft questions about your likes, dislikes, memories, and
               secrets. Make it as easy or as hard as you want!
             </p>
           </div>
           <div className="space-y-4">
-            <div className="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-400">
+            <div className="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-600 dark:text-purple-400">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -345,14 +352,16 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-white">Share & Compare</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+              Share & Compare
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
               Send your unique quiz link to friends and family. See who gets the
               highest score and discover who truly knows you best.
             </p>
           </div>
           <div className="space-y-4">
-            <div className="w-12 h-12 bg-pink-500/10 rounded-2xl flex items-center justify-center text-pink-400">
+            <div className="w-12 h-12 bg-pink-500/10 rounded-2xl flex items-center justify-center text-pink-600 dark:text-pink-400">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -367,8 +376,10 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-white">Track Results</h3>
-            <p className="text-slate-400 text-sm leading-relaxed">
+            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+              Track Results
+            </h3>
+            <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
               View detailed scoreboards. See exactly which questions they got
               right and which ones stumped them.
             </p>
