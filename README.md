@@ -1,36 +1,29 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TomoGame - The Ultimate Friendship Quiz
+
+TomoGame is a fun and interactive platform where you can create quizzes about yourself and share them with your friends to see how well they really know you.
+
+## Features
+
+- **Create Your Quiz**: Craft unique questions about your likes, dislikes, memories, and secrets.
+- **Share & Compare**: Send your quiz link to friends and see who scores the highest.
+- **Track Results**: View detailed scoreboards to see who knows you best.
+- **Auto-Registration**: Seamless sign-up process. Just enter a username and password to get started.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (App Router)
+- **Styling**: Tailwind CSS
+- **Authentication**: Firebase Auth
+- **Database**: Firebase Realtime Database
 
 ## Getting Started
 
-First, run the development server:
+1.  Clone the repository.
+2.  Install dependencies: `npm install`
+3.  Set up environment variables in `.env.local`.
+4.  Run the development server: `npm run dev`
+5.  Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Concept
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+"Tomo" comes from the Japanese word "Tomodachi" (Friend). This platform is designed to strengthen bonds between friends through fun and engaging trivia.
