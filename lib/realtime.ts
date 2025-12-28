@@ -31,3 +31,11 @@ export const listenData = (
 export const deleteData = async (path: string) => {
     return remove(ref(db, path));
 };
+
+// PUSH (add to list with unique ID)
+import { push } from "firebase/database";
+export const pushData = async (path: string, data: any) => {
+    const newRef = push(ref(db, path));
+    await set(newRef, data);
+    return newRef.key;
+};
