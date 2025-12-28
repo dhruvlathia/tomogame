@@ -84,23 +84,24 @@ export default function Home() {
   if (!isMounted) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-200 selection:bg-blue-500/30 font-sans overflow-x-hidden flex flex-col">
+    // UPDATED: bg-slate-200 provides much stronger contrast against white cards than slate-100
+    <div className="min-h-screen bg-slate-200 dark:bg-slate-950 text-slate-900 dark:text-slate-200 selection:bg-blue-500/30 font-sans overflow-x-hidden flex flex-col transition-colors duration-300">
       {/* Background Elements */}
-      <div className="fixed inset-0 h-screen z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 dark:bg-blue-600/20 blur-[120px] animate-pulse"></div>
+      <div className="fixed inset-0 h-screen z-0 pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/5 dark:bg-blue-600/10 blur-[120px] animate-pulse"></div>
         <div
-          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/10 dark:bg-purple-600/20 blur-[120px] animate-pulse"
+          className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/5 dark:bg-purple-600/10 blur-[120px] animate-pulse"
           style={{ animationDelay: "2s" }}
         ></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 dark:opacity-20 mix-blend-overlay"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-10 mix-blend-overlay"></div>
       </div>
 
       <PublicNavbar />
 
       {/* Hero Section */}
-      <main className="relative z-10 max-w-7xl mx-auto px-6 pt-12 pb-24 grid lg:grid-cols-2 gap-16 items-center flex-grow">
-        <div className="space-y-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold tracking-wider uppercase">
+      <main className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-20 grid lg:grid-cols-2 gap-12 lg:gap-20 items-center flex-grow">
+        <div className="space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white dark:bg-slate-900 border border-blue-200 dark:border-blue-900/50 text-blue-600 dark:text-blue-400 text-[10px] font-bold tracking-wider uppercase shadow-sm">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
@@ -108,25 +109,24 @@ export default function Home() {
             Join the Fun
           </div>
 
-          <h1 className="text-6xl md:text-7xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight">
             The Ultimate <br />
-            <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 dark:from-blue-400 dark:via-purple-400 dark:to-pink-400">
               Friendship Quiz
             </span>
           </h1>
 
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed">
+          <p className="text-base text-slate-600 dark:text-slate-400 max-w-lg leading-relaxed">
             Create quizzes about yourself, share them with friends, and discover
-            who knows you best. Build stronger bonds through fun trivia and see
-            how well your friends really know you!
+            who knows you best. Build stronger bonds through fun trivia!
           </p>
 
-          <div className="flex flex-wrap gap-4 pt-4">
+          <div className="flex flex-wrap gap-4 pt-2">
             <div className="flex -space-x-3">
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="w-10 h-10 rounded-full border-2 border-white dark:border-[#020617] bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold overflow-hidden"
+                  className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold overflow-hidden shadow-sm"
                 >
                   <img
                     src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${i}`}
@@ -134,7 +134,7 @@ export default function Home() {
                   />
                 </div>
               ))}
-              <div className="w-10 h-10 rounded-full border-2 border-white dark:border-[#020617] bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white">
+              <div className="w-8 h-8 rounded-full border-2 border-white dark:border-slate-900 bg-blue-600 flex items-center justify-center text-[10px] font-bold text-white shadow-sm">
                 +2k
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function Home() {
               <div className="text-sm font-bold text-slate-900 dark:text-white">
                 Friendships Made
               </div>
-              <div className="text-xs text-slate-500">
+              <div className="text-[10px] text-slate-500 uppercase tracking-wide">
                 Connecting friends everywhere
               </div>
             </div>
@@ -151,43 +151,45 @@ export default function Home() {
 
         {/* Login Form Card */}
         <div className="relative group">
-          <div className="absolute -inset-1 bg-linear-to-r from-blue-600 to-purple-600 rounded-4xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
-          <div className="relative bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-white/10 p-8 md:p-10 rounded-4xl shadow-xl dark:shadow-2xl">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+
+          {/* Card is strictly bg-white. With body being bg-slate-200, this will now pop. */}
+          <div className="relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 md:p-8 rounded-2xl shadow-xl shadow-slate-300/50 dark:shadow-none">
             {user ? (
-              <div className="text-center space-y-6 py-8">
-                <div className="w-20 h-20 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <span className="text-4xl text-blue-400">👋</span>
+              <div className="text-center space-y-6 py-4">
+                <div className="w-16 h-16 bg-blue-500/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <span className="text-3xl text-blue-400">👋</span>
                 </div>
-                <h2 className="text-3xl font-bold text-slate-900 dark:text-white">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                   Welcome back!
                 </h2>
-                <p className="text-slate-600 dark:text-slate-400">
+                <p className="text-sm text-slate-600 dark:text-slate-400">
                   You are logged in as{" "}
-                  <span className="text-blue-600 dark:text-blue-400 font-mono">
+                  <span className="text-blue-600 dark:text-blue-400 font-mono font-medium">
                     {user.email?.split("@")[0]}
                   </span>
                 </p>
                 <button
                   onClick={() => router.push("/home")}
-                  className="w-full py-4 bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/25 cursor-pointer"
+                  className="w-full py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-sm font-semibold rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-blue-500/20 cursor-pointer"
                 >
                   Go to Dashboard
                 </button>
               </div>
             ) : (
               <>
-                <div className="mb-8">
-                  <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">
+                <div className="mb-6">
+                  <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-1">
                     Start Your Quiz
                   </h2>
-                  <p className="text-slate-600 dark:text-slate-400 text-sm">
+                  <p className="text-slate-500 dark:text-slate-400 text-sm">
                     Enter a username to create your profile.
                   </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">
                       Username
                     </label>
                     <input
@@ -195,13 +197,14 @@ export default function Home() {
                       placeholder="e.g. best_friend_01"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      className="w-full bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-xl px-4 py-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
+                      // UPDATED: bg-slate-100 for input creates contrast against bg-white card
+                      className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all"
                       disabled={loading}
                     />
                   </div>
 
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-slate-500 uppercase tracking-widest ml-1">
+                  <div className="space-y-1.5">
+                    <label className="text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">
                       Password
                     </label>
                     <div className="relative">
@@ -210,17 +213,18 @@ export default function Home() {
                         placeholder="••••••••"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="w-full bg-slate-50 dark:bg-slate-950/50 border border-slate-200 dark:border-white/5 rounded-xl px-4 py-4 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all pr-12"
+                        // UPDATED: bg-slate-100 for input
+                        className="w-full bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-lg px-3 py-2.5 text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all pr-10"
                         disabled={loading}
                       />
                       <button
                         type="button"
                         onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 transition-colors"
                       >
                         {showPassword ? (
                           <svg
-                            className="w-5 h-5"
+                            className="w-4 h-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -234,7 +238,7 @@ export default function Home() {
                           </svg>
                         ) : (
                           <svg
-                            className="w-5 h-5"
+                            className="w-4 h-4"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -258,7 +262,7 @@ export default function Home() {
                   </div>
 
                   {error && (
-                    <div className="bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 px-4 py-3 rounded-xl text-sm animate-shake">
+                    <div className="bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-500/20 text-red-600 dark:text-red-400 px-3 py-2 rounded-lg text-xs font-medium animate-shake">
                       {error}
                     </div>
                   )}
@@ -266,15 +270,15 @@ export default function Home() {
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-4 bg-linear-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-bold rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 cursor-pointer"
+                    className="w-full py-2.5 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white text-sm font-semibold rounded-lg transition-all transform hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-blue-500/20 flex items-center justify-center gap-2 cursor-pointer"
                   >
                     {loading ? (
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                     ) : (
                       <>
                         <span>Get Started</span>
                         <svg
-                          className="w-5 h-5"
+                          className="w-4 h-4"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -291,8 +295,8 @@ export default function Home() {
                   </button>
                 </form>
 
-                <div className="mt-8 pt-8 border-t border-slate-200 dark:border-white/5 text-center">
-                  <p className="text-xs text-slate-500">
+                <div className="mt-6 pt-6 border-t border-slate-100 dark:border-slate-800 text-center">
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500">
                     By entering, you agree to our{" "}
                     <a
                       href="#"
@@ -300,7 +304,7 @@ export default function Home() {
                     >
                       Terms of Service
                     </a>
-                    . New accounts are created automatically.
+                    . Accounts created automatically.
                   </p>
                 </div>
               </>
@@ -310,12 +314,12 @@ export default function Home() {
       </main>
 
       {/* Features Section */}
-      <section className="relative z-10 max-w-7xl mx-auto px-6 py-24 border-t border-slate-200 dark:border-white/5">
-        <div className="grid md:grid-cols-3 gap-12">
-          <div className="space-y-4">
-            <div className="w-12 h-12 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-600 dark:text-blue-400">
+      <section className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-16 border-t border-slate-300 dark:border-slate-800/50">
+        <div className="grid md:grid-cols-3 gap-8 md:gap-12">
+          <div className="space-y-3">
+            <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-xl flex items-center justify-center text-blue-600 dark:text-blue-400">
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -328,18 +332,17 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               Create Your Quiz
             </h3>
             <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-              Easily craft questions about your likes, dislikes, memories, and
-              secrets. Make it as easy or as hard as you want!
+              Easily craft questions about your likes, dislikes, and memories.
             </p>
           </div>
-          <div className="space-y-4">
-            <div className="w-12 h-12 bg-purple-500/10 rounded-2xl flex items-center justify-center text-purple-600 dark:text-purple-400">
+          <div className="space-y-3">
+            <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 border border-purple-200 dark:border-purple-800 rounded-xl flex items-center justify-center text-purple-600 dark:text-purple-400">
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -352,18 +355,18 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               Share & Compare
             </h3>
             <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-              Send your unique quiz link to friends and family. See who gets the
-              highest score and discover who truly knows you best.
+              Send your unique quiz link to friends and see who gets the highest
+              score.
             </p>
           </div>
-          <div className="space-y-4">
-            <div className="w-12 h-12 bg-pink-500/10 rounded-2xl flex items-center justify-center text-pink-600 dark:text-pink-400">
+          <div className="space-y-3">
+            <div className="w-10 h-10 bg-pink-100 dark:bg-pink-900/30 border border-pink-200 dark:border-pink-800 rounded-xl flex items-center justify-center text-pink-600 dark:text-pink-400">
               <svg
-                className="w-6 h-6"
+                className="w-5 h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -376,12 +379,11 @@ export default function Home() {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white">
               Track Results
             </h3>
             <p className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed">
-              View detailed scoreboards. See exactly which questions they got
-              right and which ones stumped them.
+              View detailed scoreboards and see which questions stumped them.
             </p>
           </div>
         </div>

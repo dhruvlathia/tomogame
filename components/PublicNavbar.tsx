@@ -26,38 +26,50 @@ export default function PublicNavbar() {
   };
 
   return (
-    <nav className="relative z-50 flex items-center justify-between px-6 py-8 max-w-7xl w-full mx-auto">
+    <nav className="relative z-50 flex items-center justify-between px-6 py-6 md:py-8 max-w-7xl w-full mx-auto transition-colors duration-300">
       <div className="flex items-center gap-2 relative z-50">
         <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
           <span className="text-2xl">🎮</span>
         </div>
-        <span className="text-2xl font-black tracking-tighter text-black  dark:text-white">
+        <span className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">
           TOMOGAME
         </span>
       </div>
 
       {/* Desktop Menu */}
-      <div className="hidden md:flex items-center gap-8 text-sm font-medium text-slate-400">
-        <Link href="#" className="hover:text-white transition-colors">
+      <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600 dark:text-slate-400">
+        <Link
+          href="#"
+          className="hover:text-blue-600 dark:hover:text-white transition-colors"
+        >
           Features
         </Link>
-        <Link href="#" className="hover:text-white transition-colors">
+        <Link
+          href="#"
+          className="hover:text-blue-600 dark:hover:text-white transition-colors"
+        >
           How it Works
         </Link>
-        <Link href="#" className="hover:text-white transition-colors">
+        <Link
+          href="#"
+          className="hover:text-blue-600 dark:hover:text-white transition-colors"
+        >
           Community
         </Link>
-        <Link href="#" className="hover:text-white transition-colors">
+        <Link
+          href="#"
+          className="hover:text-blue-600 dark:hover:text-white transition-colors"
+        >
           Support
         </Link>
       </div>
 
       {/* Desktop Auth Button & Theme Toggle */}
-      <div className="hidden md:flex items-center gap-4">
+      <div className="hidden md:flex items-center gap-3">
         {mounted && (
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 rounded-full bg-slate-800/50 hover:bg-slate-700/50 text-slate-400 hover:text-white transition-colors border border-slate-700/50"
+            className="p-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-white transition-all hover:scale-105 active:scale-95 shadow-sm cursor-pointer"
             aria-label="Toggle Theme"
           >
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
@@ -67,42 +79,42 @@ export default function PublicNavbar() {
         {user ? (
           <button
             onClick={handleLogout}
-            className="px-5 py-2.5 rounded-full bg-slate-800 hover:bg-slate-700 text-white text-sm font-semibold transition-all border border-slate-700"
+            className="px-5 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-white text-sm font-bold hover:bg-slate-50 dark:hover:bg-slate-700 transition-all shadow-sm active:scale-95 cursor-pointer"
           >
             Logout
           </button>
         ) : (
-          <div className="w-[100px]"></div>
+          <div className="w-[10px]"></div>
         )}
       </div>
 
-      {/* Mobile Menu Button */}
-      <div className="flex items-center gap-4 md:hidden relative z-50">
+      {/* Mobile Menu Button & Theme Toggle */}
+      <div className="flex items-center gap-3 md:hidden relative z-50">
         {mounted && (
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            className="p-2 rounded-full bg-slate-800/50 hover:bg-slate-700/50 text-white transition-colors border border-slate-700/50"
+            className="p-2 rounded-lg bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300"
             aria-label="Toggle Theme"
           >
             {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         )}
         <button
-          className="w-10 h-10 flex flex-col justify-center items-center gap-1.5"
+          className="w-10 h-10 flex flex-col justify-center items-center gap-1.5 p-2 rounded-lg bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700"
           onClick={() => setIsOpen(!isOpen)}
         >
           <span
-            className={`w-6 h-0.5 bg-black dark:bg-white transition-all duration-300 ${
+            className={`w-5 h-0.5 bg-slate-900 dark:bg-white transition-all duration-300 ${
               isOpen ? "rotate-45 translate-y-2" : ""
             }`}
           ></span>
           <span
-            className={`w-6 h-0.5 bg-black dark:bg-white transition-all duration-300 ${
+            className={`w-5 h-0.5 bg-slate-900 dark:bg-white transition-all duration-300 ${
               isOpen ? "opacity-0" : ""
             }`}
           ></span>
           <span
-            className={`w-6 h-0.5 bg-black dark:bg-white transition-all duration-300 ${
+            className={`w-5 h-0.5 bg-slate-900 dark:bg-white transition-all duration-300 ${
               isOpen ? "-rotate-45 -translate-y-2" : ""
             }`}
           ></span>
@@ -152,7 +164,7 @@ export default function PublicNavbar() {
                 handleLogout();
                 setIsOpen(false);
               }}
-              className="px-8 py-3 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-semibold transition-all border border-slate-200 dark:border-slate-700 mt-4"
+              className="px-8 py-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-bold transition-all shadow-lg mt-4"
             >
               Logout
             </button>

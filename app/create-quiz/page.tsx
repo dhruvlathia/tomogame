@@ -6,7 +6,7 @@ import { auth } from "@/lib/firebase";
 import { onAuthStateChanged } from "firebase/auth";
 import AuthenticatedNavbar from "@/components/AuthenticatedNavbar";
 import AuthenticatedTopbar from "@/components/AuthenticatedTopbar";
-import { Question, Option } from "@/lib/dummy-data";
+import { Question } from "@/lib/dummy-data";
 import { readDataOnce, pushData } from "@/lib/realtime";
 import {
   ChevronLeft,
@@ -18,6 +18,9 @@ import {
   BarChart3,
 } from "lucide-react";
 import Image from "next/image";
+
+// Helper to generate ID (safer than crypto.randomUUID for client compatibility)
+const generateId = () => Math.random().toString(36).substring(2, 15);
 
 export default function CreateQuizPage() {
   const [loading, setLoading] = useState(true);
@@ -53,8 +56,6 @@ export default function CreateQuizPage() {
           const currentDraftJson = localStorage.getItem("tomo_current_draft");
           if (currentDraftJson) {
             const currentDraft = JSON.parse(currentDraftJson);
-            // Verify if this draft belongs to the user (optional, but good practice if we stored userId)
-            // For now, just load it
             setDraftId(currentDraft.id);
             setQuizType(currentDraft.type);
             setSelectedAnswers(currentDraft.answers);
@@ -62,7 +63,7 @@ export default function CreateQuizPage() {
             setStep(currentDraft.step);
           } else {
             // Start new draft
-            setDraftId(crypto.randomUUID());
+            setDraftId(generateId());
           }
         } catch (error) {
           console.error("Error fetching data:", error);
@@ -87,10 +88,10 @@ export default function CreateQuizPage() {
       lastUpdated: Date.now(),
     };
 
-    // Save to current
-    localStorage.setItem("tomo_current_draft", JSON.stringify(draftData));
+    if (Object.keys(selectedAnswers).length > 0) {
+      localStorage.setItem("tomo_current_draft", JSON.stringify(draftData));
+    }
 
-    // Save to drafts list
     const draftsJson = localStorage.getItem("tomo_quiz_drafts");
     const drafts = draftsJson ? JSON.parse(draftsJson) : {};
     drafts[draftId] = draftData;
@@ -122,7 +123,6 @@ export default function CreateQuizPage() {
 
   const skipQuestion = () => {
     if (questions.length === 0) return;
-    // Remove answer if skipped
     const newAnswers = { ...selectedAnswers };
     delete newAnswers[questions[currentQuestionIndex].id];
     setSelectedAnswers(newAnswers);
@@ -131,25 +131,33 @@ export default function CreateQuizPage() {
 
   const handlePublish = async () => {
     if (!auth.currentUser) return;
+
+    const answeredQuestionIds = Object.keys(selectedAnswers);
+    if (answeredQuestionIds.length < 7) {
+      alert("Please answer at least 7 questions to publish your quiz.");
+      return;
+    }
+
     setPublishing(true);
 
     try {
+      const filteredQuestions = questions.filter((q) =>
+        answeredQuestionIds.includes(q.id)
+      );
+
       const quizData = {
         type: quizType,
         privacy,
-        questions, // Save the questions snapshot with the quiz
+        questions: filteredQuestions,
         answers: selectedAnswers,
         createdAt: Date.now(),
         creatorId: auth.currentUser.uid,
       };
 
-      // Save to Realtime DB
       await pushData(`qs/${auth.currentUser.uid}`, quizData);
 
-      // Clear current draft
       localStorage.removeItem("tomo_current_draft");
 
-      // Remove from drafts list
       const draftsJson = localStorage.getItem("tomo_quiz_drafts");
       if (draftsJson) {
         const drafts = JSON.parse(draftsJson);
@@ -168,7 +176,7 @@ export default function CreateQuizPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-[#020617] flex items-center justify-center">
+      <div className="min-h-screen bg-slate-200 dark:bg-slate-950 flex items-center justify-center">
         <div className="w-8 h-8 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin"></div>
       </div>
     );
@@ -181,22 +189,24 @@ export default function CreateQuizPage() {
       : 0;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-white pb-24 relative overflow-hidden">
-      {/* Background Blobs */}
-      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 dark:bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 dark:bg-purple-500/5 rounded-full blur-[120px] pointer-events-none" />
+    // Background updated to slate-200 (Light) and slate-950 (Dark) for contrast
+    <div className="min-h-screen bg-slate-200 dark:bg-slate-950 text-slate-900 dark:text-slate-200 pb-24 relative overflow-hidden transition-colors duration-300">
+      {/* Background Blobs - Reduced opacity for subtle effect */}
+      <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/5 dark:bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute bottom-[10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/5 dark:bg-purple-500/10 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-0 left-0 w-full h-full bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.03] dark:opacity-5 mix-blend-overlay pointer-events-none"></div>
 
-      <div className="max-w-4xl mx-auto p-6 relative z-10">
+      <div className="max-w-4xl mx-auto p-4 md:p-6 relative z-10">
         <AuthenticatedTopbar />
 
-        <div className="mt-4">
+        <div className="mt-8">
           {step === "type" && (
             <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-              <div className="text-center space-y-2">
-                <h1 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <div className="text-center space-y-3">
+                <h1 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white">
                   Create Something New
                 </h1>
-                <p className="text-slate-500 dark:text-slate-400">
+                <p className="text-slate-500 dark:text-slate-400 text-lg">
                   Choose what kind of interaction you want to create today.
                 </p>
               </div>
@@ -207,27 +217,28 @@ export default function CreateQuizPage() {
                     setQuizType("quiz");
                     setStep("questions");
                   }}
-                  className="group relative bg-white dark:bg-slate-900/50 border-2 border-transparent hover:border-blue-500/50 rounded-3xl p-8 transition-all duration-300 shadow-xl shadow-blue-500/5 hover:shadow-blue-500/10 text-left overflow-hidden"
+                  // Card updated: bg-white for light mode contrast
+                  className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-600 rounded-3xl p-8 transition-all duration-300 shadow-xl shadow-slate-300/50 dark:shadow-none hover:-translate-y-1 text-left overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <Layout size={120} />
                   </div>
                   <div className="relative z-10">
-                    <div className="w-14 h-14 bg-blue-500/10 dark:bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <div className="w-16 h-16 bg-blue-500/10 dark:bg-blue-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                       <Sparkles
                         className="text-blue-600 dark:text-blue-400"
-                        size={28}
+                        size={32}
                       />
                     </div>
-                    <h2 className="text-2xl font-bold mb-3">
+                    <h2 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">
                       Interactive Quiz
                     </h2>
-                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">
                       Create a fun quiz about yourself. Friends will try to
                       guess your answers and see how well they know you!
                     </p>
-                    <div className="mt-6 flex items-center text-blue-600 dark:text-blue-400 font-semibold gap-2">
-                      Start Creating <ChevronRight size={18} />
+                    <div className="mt-8 flex items-center text-blue-600 dark:text-blue-400 font-bold gap-2 text-sm uppercase tracking-wide">
+                      Start Creating <ChevronRight size={16} />
                     </div>
                   </div>
                 </button>
@@ -237,25 +248,27 @@ export default function CreateQuizPage() {
                     setQuizType("survey");
                     setStep("questions");
                   }}
-                  className="group relative bg-white dark:bg-slate-900/50 border-2 border-transparent hover:border-purple-500/50 rounded-3xl p-8 transition-all duration-300 shadow-xl shadow-purple-500/5 hover:shadow-purple-500/10 text-left overflow-hidden"
+                  className="group relative bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-400 dark:hover:border-purple-600 rounded-3xl p-8 transition-all duration-300 shadow-xl shadow-slate-300/50 dark:shadow-none hover:-translate-y-1 text-left overflow-hidden"
                 >
-                  <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                  <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <BarChart3 size={120} />
                   </div>
                   <div className="relative z-10">
-                    <div className="w-14 h-14 bg-purple-500/10 dark:bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
+                    <div className="w-16 h-16 bg-purple-500/10 dark:bg-purple-500/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-500">
                       <BarChart3
                         className="text-purple-600 dark:text-purple-400"
-                        size={28}
+                        size={32}
                       />
                     </div>
-                    <h2 className="text-2xl font-bold mb-3">Opinion Survey</h2>
-                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+                    <h2 className="text-2xl font-bold mb-3 text-slate-900 dark:text-white">
+                      Opinion Survey
+                    </h2>
+                    <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">
                       Gather opinions and preferences from your friends. Perfect
                       for planning or just for fun!
                     </p>
-                    <div className="mt-6 flex items-center text-purple-600 dark:text-purple-400 font-semibold gap-2">
-                      Start Creating <ChevronRight size={18} />
+                    <div className="mt-8 flex items-center text-purple-600 dark:text-purple-400 font-bold gap-2 text-sm uppercase tracking-wide">
+                      Start Creating <ChevronRight size={16} />
                     </div>
                   </div>
                 </button>
@@ -264,28 +277,28 @@ export default function CreateQuizPage() {
           )}
 
           {step === "questions" && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+            <div className="space-y-6 animate-in fade-in slide-in-from-right-4 duration-500">
               {/* Progress Bar */}
-              <div className="space-y-3">
+              <div className="space-y-3 px-1">
                 <div className="flex justify-between items-end">
                   <div>
                     <span className="text-xs font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
                       Question {currentQuestionIndex + 1} of {questions.length}
                     </span>
-                    <h2 className="text-xl font-bold mt-1">
+                    <h2 className="text-lg font-bold mt-1 text-slate-900 dark:text-white">
                       Select your answer
                     </h2>
                   </div>
                   <button
                     onClick={skipQuestion}
-                    className="flex items-center gap-2 text-sm font-medium text-slate-500 hover:text-slate-800 dark:hover:text-slate-200 transition-colors"
+                    className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                   >
-                    Skip <SkipForward size={16} />
+                    Skip <SkipForward size={14} />
                   </button>
                 </div>
-                <div className="h-2 w-full bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                <div className="h-2.5 w-full bg-slate-300 dark:bg-slate-800 rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-500 ease-out"
+                    className="h-full bg-gradient-to-r from-blue-600 to-purple-600 transition-all duration-500 ease-out rounded-full"
                     style={{ width: `${progress}%` }}
                   />
                 </div>
@@ -293,12 +306,13 @@ export default function CreateQuizPage() {
 
               {/* Question Card */}
               {currentQuestion && (
-                <div className="bg-white dark:bg-slate-800/90 backdrop-blur-xl border border-slate-200 dark:border-white/10 rounded-xl p-4 md:p-12 shadow-2xl shadow-slate-200/50 dark:shadow-none">
-                  <h3 className="text-2xl md:text-3xl font-bold text-center mb-10 leading-tight">
+                // Card updated: bg-white, distinct borders
+                <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-6 md:p-10 shadow-xl shadow-slate-300/50 dark:shadow-none">
+                  <h3 className="text-2xl md:text-3xl font-bold text-center mb-8 leading-tight text-slate-900 dark:text-white">
                     {currentQuestion.text}
                   </h3>
 
-                  <div className="grid grid-cols-2 gap-4 md:gap-6">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {currentQuestion.options.map((option) => {
                       const isSelected =
                         selectedAnswers[currentQuestion.id] === option.id;
@@ -308,14 +322,15 @@ export default function CreateQuizPage() {
                           onClick={() =>
                             handleOptionSelect(currentQuestion.id, option.id)
                           }
-                          className={`group relative flex flex-col items-center p-2 md:p-3 rounded-2xl border-2 transition-all duration-300 cursor-pointer ${
+                          // Options updated: Better contrast for selected/unselected states
+                          className={`group relative flex flex-col items-center p-3 md:p-4 rounded-2xl border-2 transition-all duration-200 cursor-pointer ${
                             isSelected
-                              ? "border-blue-500 bg-blue-50/50 dark:bg-blue-500/20"
-                              : "border-transparent bg-slate-50 dark:bg-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800"
+                              ? "border-blue-500 bg-blue-50/50 dark:bg-blue-500/10 shadow-lg shadow-blue-500/10 scale-[1.02]"
+                              : "border-transparent bg-slate-100 dark:bg-slate-950/50 hover:bg-slate-200 dark:hover:bg-slate-800 hover:scale-[1.01]"
                           }`}
                         >
                           {option.imageSrc && (
-                            <div className="relative w-full aspect-square mb-4 rounded-xl overflow-hidden shadow-md group-hover:scale-105 transition-transform duration-500">
+                            <div className="relative w-full aspect-square mb-3 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-all">
                               <Image
                                 src={option.imageSrc}
                                 alt={option.name}
@@ -323,19 +338,19 @@ export default function CreateQuizPage() {
                                 className="object-cover"
                               />
                               {isSelected && (
-                                <div className="absolute inset-0 bg-blue-500/20 flex items-center justify-center">
-                                  <div className="bg-blue-500 text-white p-2 rounded-full shadow-lg">
-                                    <Check size={20} />
+                                <div className="absolute inset-0 bg-blue-500/20 backdrop-blur-[2px] flex items-center justify-center animate-in fade-in duration-200">
+                                  <div className="bg-blue-500 text-white p-1.5 rounded-full shadow-lg">
+                                    <Check size={20} strokeWidth={3} />
                                   </div>
                                 </div>
                               )}
                             </div>
                           )}
                           <span
-                            className={`font-bold text-sm md:text-base ${
+                            className={`font-bold text-sm md:text-base text-center leading-tight ${
                               isSelected
-                                ? "text-blue-600 dark:text-blue-400"
-                                : ""
+                                ? "text-blue-700 dark:text-blue-400"
+                                : "text-slate-700 dark:text-slate-300"
                             }`}
                           >
                             {option.name}
@@ -348,29 +363,29 @@ export default function CreateQuizPage() {
               )}
 
               {/* Navigation */}
-              <div className="flex justify-between items-center">
+              <div className="flex justify-between items-center pt-2">
                 <button
                   onClick={prevQuestion}
                   disabled={currentQuestionIndex === 0}
-                  className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold transition-all ${
+                  className={`flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm transition-all ${
                     currentQuestionIndex === 0
                       ? "opacity-0 pointer-events-none"
-                      : "bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      : "text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800 hover:shadow-md"
                   }`}
                 >
-                  <ChevronLeft size={20} /> Previous
+                  <ChevronLeft size={18} /> Previous
                 </button>
 
                 <button
                   onClick={nextQuestion}
-                  className="flex items-center gap-2 px-8 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all shadow-lg cursor-pointer"
+                  className="flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-blue-500/25 active:scale-95 transition-all cursor-pointer"
                 >
                   {currentQuestionIndex === questions.length - 1
                     ? "Finish"
                     : currentQuestion && selectedAnswers[currentQuestion.id]
                     ? "Next"
                     : "Skip"}{" "}
-                  <ChevronRight size={20} />
+                  <ChevronRight size={18} />
                 </button>
               </div>
             </div>
@@ -378,58 +393,85 @@ export default function CreateQuizPage() {
 
           {step === "summary" && (
             <div className="space-y-8 animate-in fade-in zoom-in-95 duration-500 text-center">
-              <div className="w-24 h-24 bg-green-500/10 dark:bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-20 h-20 bg-green-500/10 dark:bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 ring-8 ring-green-500/5">
                 <Check
                   className="text-green-600 dark:text-green-400"
-                  size={48}
+                  size={40}
+                  strokeWidth={3}
                 />
               </div>
               <div className="space-y-2">
-                <h1 className="text-3xl md:text-4xl font-black">Quiz Ready!</h1>
-                <p className="text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-                  You've answered {Object.keys(selectedAnswers).length} out of{" "}
-                  {questions.length} questions. Ready to share this with your
-                  friends?
+                <h1 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white">
+                  {Object.keys(selectedAnswers).length >= 7
+                    ? "Quiz Ready!"
+                    : "Almost There!"}
+                </h1>
+                <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto text-base">
+                  {Object.keys(selectedAnswers).length >= 7
+                    ? `You've answered ${
+                        Object.keys(selectedAnswers).length
+                      } questions. Ready to share this with your friends?`
+                    : `You've answered ${
+                        Object.keys(selectedAnswers).length
+                      } questions. You need at least 7 answered questions to publish.`}
                 </p>
               </div>
 
-              <div className="bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-white/10 rounded-3xl p-8 max-w-md mx-auto">
-                <div className="space-y-4 text-left">
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-white/5">
-                    <span className="text-slate-500">Type</span>
-                    <span className="font-bold capitalize">{quizType}</span>
+              {/* Summary Card updated to bg-white */}
+              <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 max-w-md mx-auto shadow-xl shadow-slate-300/50 dark:shadow-none text-sm">
+                <div className="space-y-5 text-left">
+                  <div className="flex justify-between items-center pb-5 border-b border-slate-100 dark:border-slate-800">
+                    <span className="text-slate-500 font-medium">Type</span>
+                    <span className="font-bold capitalize bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-slate-700 dark:text-slate-300">
+                      {quizType}
+                    </span>
                   </div>
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-white/5">
-                    <span className="text-slate-500">Questions</span>
-                    <span className="font-bold">{questions.length}</span>
+                  <div className="flex justify-between items-center pb-5 border-b border-slate-100 dark:border-slate-800">
+                    <span className="text-slate-500 font-medium">
+                      Questions
+                    </span>
+                    <span className="font-bold text-slate-900 dark:text-white">
+                      {questions.length} Total
+                    </span>
                   </div>
-                  <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-white/5">
-                    <span className="text-slate-500">Answered</span>
-                    <span className="font-bold text-blue-600 dark:text-blue-400">
-                      {Object.keys(selectedAnswers).length}
+                  <div className="flex justify-between items-center pb-5 border-b border-slate-100 dark:border-slate-800">
+                    <span className="text-slate-500 font-medium">Answered</span>
+                    <span
+                      className={`font-bold flex items-center gap-2 ${
+                        Object.keys(selectedAnswers).length >= 7
+                          ? "text-green-600 dark:text-green-400"
+                          : "text-red-600 dark:text-red-400"
+                      }`}
+                    >
+                      {Object.keys(selectedAnswers).length} / 7 min
+                      {Object.keys(selectedAnswers).length >= 7 && (
+                        <Check size={14} strokeWidth={3} />
+                      )}
                     </span>
                   </div>
 
                   {/* Privacy Selection */}
                   <div className="pt-2">
-                    <span className="text-slate-500 block mb-2">Privacy</span>
-                    <div className="grid grid-cols-2 gap-2 p-1 bg-gray-100 dark:bg-gray-900 rounded-2xl">
+                    <span className="text-slate-500 font-medium block mb-3">
+                      Privacy Setting
+                    </span>
+                    <div className="grid grid-cols-2 gap-2 p-1.5 bg-slate-100 dark:bg-slate-950 rounded-xl">
                       <button
                         onClick={() => setPrivacy("public")}
-                        className={`p-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
+                        className={`p-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
                           privacy === "public"
-                            ? "bg-blue-100 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400"
-                            : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                            ? "bg-white dark:bg-slate-800 text-blue-600 dark:text-blue-400 shadow-sm"
+                            : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                         }`}
                       >
                         Public
                       </button>
                       <button
                         onClick={() => setPrivacy("private")}
-                        className={`p-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
+                        className={`p-2.5 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
                           privacy === "private"
-                            ? "bg-purple-100 text-purple-600 dark:bg-purple-500/20 dark:text-purple-400"
-                            : "bg-slate-100 dark:bg-slate-800 text-slate-500"
+                            ? "bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-400 shadow-sm"
+                            : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
                         }`}
                       >
                         Private
@@ -439,17 +481,19 @@ export default function CreateQuizPage() {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
                 <button
                   onClick={() => setStep("questions")}
-                  className="px-8 py-4 bg-white dark:bg-slate-900 border border-slate-200 dark:border-white/10 rounded-2xl font-bold hover:bg-slate-50 dark:hover:bg-slate-800 transition-all cursor-pointer"
+                  className="px-8 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all cursor-pointer"
                 >
                   Review Answers
                 </button>
                 <button
                   onClick={handlePublish}
-                  disabled={publishing}
-                  className="px-8 py-4 bg-blue-600 text-white rounded-2xl font-bold hover:bg-blue-700 hover:scale-105 active:scale-95 transition-all shadow-xl shadow-blue-600/20 disabled:opacity-50 disabled:pointer-events-none flex items-center gap-2 cursor-pointer"
+                  disabled={
+                    publishing || Object.keys(selectedAnswers).length < 7
+                  }
+                  className="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl text-sm font-bold hover:shadow-lg hover:shadow-blue-500/25 active:scale-95 transition-all disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed flex items-center gap-2 cursor-pointer"
                 >
                   {publishing ? (
                     <>

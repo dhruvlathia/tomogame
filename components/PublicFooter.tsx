@@ -1,11 +1,11 @@
 export default function PublicFooter() {
   return (
-    <footer className="relative z-10 border-t border-slate-200 dark:border-white/5 bg-slate-50 dark:bg-[#020617] pt-16 pb-8">
+    <footer className="relative z-10 border-t border-slate-200 dark:border-white/5 bg-slate-900 dark:bg-[#020617] pt-16 pb-8 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-2">
             <div className="flex items-center gap-2 mb-6">
-              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/20">
                 <span className="text-lg">🎮</span>
               </div>
               <span className="text-xl font-black tracking-tighter text-white">
@@ -22,22 +22,22 @@ export default function PublicFooter() {
             <h4 className="text-white font-bold mb-6">Platform</h4>
             <ul className="space-y-4 text-sm text-slate-400">
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors">
+                <a href="#" className="hover:text-white transition-colors">
                   About Us
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors">
+                <a href="#" className="hover:text-white transition-colors">
                   Features
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors">
+                <a href="#" className="hover:text-white transition-colors">
                   Careers
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors">
+                <a href="#" className="hover:text-white transition-colors">
                   Contact
                 </a>
               </li>
@@ -48,17 +48,17 @@ export default function PublicFooter() {
             <h4 className="text-white font-bold mb-6">Legal</h4>
             <ul className="space-y-4 text-sm text-slate-400">
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors">
+                <a href="#" className="hover:text-white transition-colors">
                   Privacy Policy
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors">
+                <a href="#" className="hover:text-white transition-colors">
                   Terms of Service
                 </a>
               </li>
               <li>
-                <a href="#" className="hover:text-blue-400 transition-colors">
+                <a href="#" className="hover:text-white transition-colors">
                   Cookie Policy
                 </a>
               </li>
@@ -66,7 +66,7 @@ export default function PublicFooter() {
           </div>
         </div>
 
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-slate-500 text-xs">
             © {new Date().getFullYear()} TomoGame. All rights reserved.
           </p>
