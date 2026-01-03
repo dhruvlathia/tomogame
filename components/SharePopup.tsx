@@ -25,6 +25,26 @@ const SharePopup = ({
 }: SharePopupProps) => {
   const [shareUrl, setShareUrl] = useState("");
   const [copySuccess, setCopySuccess] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      if (typeof window !== "undefined") {
+        const userAgent =
+          navigator.userAgent || navigator.vendor || (window as any).opera;
+        const isMobileUA =
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            userAgent
+          );
+        const isSmallScreen = window.innerWidth < 1024; // Standard tablet/mobile breakpoint
+        setIsMobile(isMobileUA || isSmallScreen);
+      }
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     setShareUrl(
@@ -33,7 +53,12 @@ const SharePopup = ({
   }, [url]);
 
   useEffect(() => {
-    if (isOpen && typeof navigator !== "undefined" && !!navigator.share) {
+    if (
+      isOpen &&
+      isMobile &&
+      typeof navigator !== "undefined" &&
+      !!navigator.share
+    ) {
       navigator
         .share({
           title: title,
@@ -45,11 +70,10 @@ const SharePopup = ({
         .then(() => onClose())
         .catch((err) => {
           console.error("Error sharing:", err);
-          // If it's an AbortError (user cancelled), we still close it as per instructions
           onClose();
         });
     }
-  }, [isOpen, shareUrl, url, title, onClose]);
+  }, [isOpen, isMobile, shareUrl, url, title, onClose]);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareUrl).then(
@@ -61,7 +85,11 @@ const SharePopup = ({
     );
   };
 
-  if (!isOpen || (typeof navigator !== "undefined" && !!navigator.share))
+  // Strict condition: Only show popup on desktop and when navigator.share is not being used
+  if (
+    !isOpen ||
+    (isMobile && typeof navigator !== "undefined" && !!navigator.share)
+  )
     return null;
 
   return (
