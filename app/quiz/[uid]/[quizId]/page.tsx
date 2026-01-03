@@ -13,6 +13,8 @@ import {
   onAuthStateChanged,
   User,
 } from "firebase/auth";
+import { ref, get, set } from "firebase/database";
+import { db } from "@/lib/firebase";
 import {
   ChevronLeft,
   ChevronRight,
@@ -61,13 +63,27 @@ export default function AttemptQuizPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Profile Check State
+  const [showGenderModal, setShowGenderModal] = useState(false);
+  const [pendingUser, setPendingUser] = useState<User | null>(null);
+  const [genderLoading, setGenderLoading] = useState(false);
+
   // Auth Listener
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
       if (currentUser) {
         setAttempterName(currentUser.email?.split("@")[0] || "");
-        checkExistingAttempt(currentUser.uid);
+        // Check if user has a profile before proceeding
+        const userRef = ref(db, `users/${currentUser.uid}`);
+        const snapshot = await get(userRef);
+
+        if (snapshot.exists()) {
+          checkExistingAttempt(currentUser.uid);
+        } else {
+          setPendingUser(currentUser);
+          setShowGenderModal(true);
+        }
       } else {
         setStep("auth");
       }
@@ -125,15 +141,20 @@ export default function AttemptQuizPage() {
     const email = `${username.trim()}@tomogame.local`;
 
     try {
-      await signInWithEmailAndPassword(auth, email, password);
-      // onAuthStateChanged will handle the rest
+      const result = await signInWithEmailAndPassword(auth, email, password);
+      // onAuthStateChanged will handle the profile check
     } catch (err: any) {
       if (
         err.code === "auth/user-not-found" ||
         err.code === "auth/invalid-credential"
       ) {
         try {
-          await createUserWithEmailAndPassword(auth, email, password);
+          const result = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+          );
+          // onAuthStateChanged will handle the profile check
         } catch (regErr: any) {
           setAuthError(regErr.message);
         }
@@ -142,6 +163,30 @@ export default function AttemptQuizPage() {
       }
     } finally {
       setAuthLoading(false);
+    }
+  };
+
+  const handleGenderSelect = async (gender: "Male" | "Female") => {
+    if (!pendingUser) return;
+
+    setGenderLoading(true);
+    try {
+      const userRef = ref(db, `users/${pendingUser.uid}`);
+      await set(userRef, {
+        username: username || pendingUser.email?.split("@")[0],
+        email: pendingUser.email,
+        gender: gender,
+        createdAt: new Date().toISOString(),
+        uid: pendingUser.uid,
+      });
+      setShowGenderModal(false);
+      checkExistingAttempt(pendingUser.uid);
+    } catch (err) {
+      console.error("Error saving gender:", err);
+      setAuthError("Failed to save profile. Please try again.");
+      setShowGenderModal(false);
+    } finally {
+      setGenderLoading(false);
     }
   };
 
@@ -579,6 +624,131 @@ export default function AttemptQuizPage() {
       </main>
 
       <PublicFooter />
+
+      {/* Gender Selection Modal */}
+      {showGenderModal && (
+        <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md transition-all duration-500 animate-in fade-in">
+          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-white/20 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-300">
+            {/* Modal Header */}
+            <div className="p-8 pb-4 text-center">
+              <div className="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 rotate-3 group-hover:rotate-6 transition-transform">
+                <svg
+                  className="w-8 h-8 text-blue-600 dark:text-blue-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-2">
+                One Last Step!
+              </h2>
+              <p className="text-slate-500 dark:text-slate-400 text-sm">
+                To personalize your experience, please select your gender.
+              </p>
+            </div>
+
+            {/* Selection Area */}
+            <div className="p-8 pt-4 grid grid-cols-2 gap-4">
+              <button
+                onClick={() => handleGenderSelect("Male")}
+                disabled={genderLoading}
+                className="group relative flex flex-col items-center gap-4 p-6 rounded-2xl bg-slate-50 dark:bg-slate-950 border-2 border-transparent hover:border-blue-500/50 hover:bg-blue-50/50 dark:hover:bg-blue-900/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                  👨
+                </div>
+                <span className="font-bold text-slate-900 dark:text-white">
+                  Male
+                </span>
+                {genderLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-slate-900/50 rounded-2xl">
+                    <div className="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+              </button>
+
+              <button
+                onClick={() => handleGenderSelect("Female")}
+                disabled={genderLoading}
+                className="group relative flex flex-col items-center gap-4 p-6 rounded-2xl bg-slate-50 dark:bg-slate-950 border-2 border-transparent hover:border-pink-500/50 hover:bg-pink-50/50 dark:hover:bg-pink-900/20 transition-all duration-300 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <div className="w-16 h-16 rounded-full bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center text-3xl group-hover:scale-110 transition-transform">
+                  👩
+                </div>
+                <span className="font-bold text-slate-900 dark:text-white">
+                  Female
+                </span>
+                {genderLoading && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-slate-900/50 rounded-2xl">
+                    <div className="w-5 h-5 border-2 border-pink-500 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                )}
+              </button>
+            </div>
+
+            {/* Footer Info */}
+            <div className="px-8 pb-8 text-center">
+              <p className="text-[10px] text-slate-400 dark:text-slate-500 uppercase tracking-widest font-bold">
+                This helps us customize your avatar and quiz themes
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <style jsx global>{`
+        @keyframes shake {
+          0%,
+          100% {
+            transform: translateX(0);
+          }
+          25% {
+            transform: translateX(-4px);
+          }
+          75% {
+            transform: translateX(4px);
+          }
+        }
+        .animate-shake {
+          animation: shake 0.2s ease-in-out 0s 2;
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        @keyframes zoomIn {
+          from {
+            transform: scale(0.95);
+            opacity: 0;
+          }
+          to {
+            transform: scale(1);
+            opacity: 1;
+          }
+        }
+        .animate-in {
+          animation-duration: 300ms;
+          animation-fill-mode: both;
+        }
+        .fade-in {
+          animation-name: fadeIn;
+        }
+        .zoom-in-95 {
+          animation-name: zoomIn;
+        }
+      `}</style>
     </div>
   );
 }

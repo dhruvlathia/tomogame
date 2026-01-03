@@ -10,6 +10,8 @@ TomoGame is a fun and interactive platform where you can create quizzes about yo
 - **Privacy Controls**: Choose between Public and Private visibility for your published content.
 - **Share & Compare**: Send your quiz link to friends and see who scores the highest.
 - **Track Results**: View detailed scoreboards to see who knows you best.
+- **User Profile System**: Every user has a persistent profile in the Realtime Database.
+- **Gender Selection**: Personalized experience with gender-based customization (Male/Female) during first-time registration.
 - **Auto-Registration**: Seamless sign-up process. Just enter a username and password to get started.
 
 ## Tech Stack

@@ -27,25 +27,25 @@ export default function PublicNavbar() {
 
   return (
     <nav className="relative z-50 flex items-center justify-between px-6 py-6 md:py-8 max-w-7xl w-full mx-auto transition-colors duration-300">
-      <div className="flex items-center gap-2 relative z-50">
-        <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
+      <Link href="/" className="flex items-center gap-2 relative z-50 group">
+        <div className="w-10 h-10 bg-linear-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-110 transition-transform">
           <span className="text-2xl">🎮</span>
         </div>
         <span className="text-2xl font-black tracking-tighter text-slate-900 dark:text-white">
           TOMOGAME
         </span>
-      </div>
+      </Link>
 
       {/* Desktop Menu */}
       <div className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600 dark:text-slate-400">
         <Link
-          href="#"
+          href="/features"
           className="hover:text-blue-600 dark:hover:text-white transition-colors"
         >
           Features
         </Link>
         <Link
-          href="#"
+          href="/how-it-works"
           className="hover:text-blue-600 dark:hover:text-white transition-colors"
         >
           How it Works
@@ -57,7 +57,7 @@ export default function PublicNavbar() {
           Community
         </Link>
         <Link
-          href="#"
+          href="/support"
           className="hover:text-blue-600 dark:hover:text-white transition-colors"
         >
           Support
@@ -131,14 +131,14 @@ export default function PublicNavbar() {
       >
         <div className="flex flex-col items-center gap-8 text-xl font-bold text-slate-900 dark:text-white">
           <Link
-            href="#"
+            href="/features"
             onClick={() => setIsOpen(false)}
             className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
             Features
           </Link>
           <Link
-            href="#"
+            href="/how-it-works"
             onClick={() => setIsOpen(false)}
             className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >
@@ -152,7 +152,7 @@ export default function PublicNavbar() {
             Community
           </Link>
           <Link
-            href="#"
+            href="/support"
             onClick={() => setIsOpen(false)}
             className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
           >

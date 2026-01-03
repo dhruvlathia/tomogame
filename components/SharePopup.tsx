@@ -32,6 +32,25 @@ const SharePopup = ({
     );
   }, [url]);
 
+  useEffect(() => {
+    if (isOpen && typeof navigator !== "undefined" && !!navigator.share) {
+      navigator
+        .share({
+          title: title,
+          url:
+            shareUrl ||
+            url ||
+            (typeof window !== "undefined" ? window.location.href : ""),
+        })
+        .then(() => onClose())
+        .catch((err) => {
+          console.error("Error sharing:", err);
+          // If it's an AbortError (user cancelled), we still close it as per instructions
+          onClose();
+        });
+    }
+  }, [isOpen, shareUrl, url, title, onClose]);
+
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareUrl).then(
       () => {
@@ -42,11 +61,12 @@ const SharePopup = ({
     );
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || (typeof navigator !== "undefined" && !!navigator.share))
+    return null;
 
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity duration-300"
+      className="fixed inset-0 z-9999 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 transition-opacity duration-300"
       onClick={onClose}
     >
       <div
